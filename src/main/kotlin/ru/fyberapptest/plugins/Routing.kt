@@ -44,7 +44,7 @@ fun Application.configureRouting() {
         }
 
         // Маршрут для обработки callback от Fyber
-        post("/fyber-callback") {
+        get("/fyber-callback") {
             //val earning = call.receive<Earning>()
             //println("callback earning:$earning")
 
