@@ -7,7 +7,9 @@ import io.ktor.server.netty.*
 import ru.fyberapptest.plugins.*
 
 fun main() {
-    embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
+    val port = System.getenv("PORT")?.toInt() ?: 8080 // Порт 8080 по умолчанию
+    println("port:$port")
+    embeddedServer(Netty, port = port) {
         configureRouting()
     }.start(wait = true)
 }
