@@ -45,8 +45,11 @@ fun Application.configureRouting() {
 
         // Маршрут для обработки callback от Fyber
         post("/fyber-callback") {
-            val earning = call.receive<Earning>()
-            println("callback earning:$earning")
+            //val earning = call.receive<Earning>()
+            //println("callback earning:$earning")
+
+            val requestBody = call.receiveText()
+            println("Received callback from Fyber: $requestBody")
 
 /*            transaction {
                 EarningDAO.new {
