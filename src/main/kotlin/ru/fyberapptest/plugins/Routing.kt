@@ -10,6 +10,10 @@ import ru.fyberapptest.dto.Earning
 fun Application.configureRouting() {
 
     routing {
+        get("/message") {
+            call.respondText("Влад молодец!", ContentType.Text.Plain)
+        }
+
         get("/earnings/{userId}") {
             val userId = call.parameters["userId"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
 
