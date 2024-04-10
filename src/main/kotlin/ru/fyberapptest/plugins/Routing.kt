@@ -48,25 +48,18 @@ fun Application.configureRouting() {
             //val earning = call.receive<Earning>()
             //println("callback earning:$earning")
 
-            val requestBody = call.receiveText()
-            println("Received callback from Fyber: $requestBody")
+            //val requestBody = call.receiveText()
+            //println("Received callback from Fyber: $requestBody")
 
-            // Распарсим строку запроса для извлечения параметров
-            val params = requestBody.split("&").associate {
-                val (key, value) = it.split("=")
-                key to value
-            }
+            val sid = call.parameters["sid"]
+            val userId = call.parameters["uid"]
+            val amount = call.parameters["amount"]
+            val currencyName = call.parameters["currency_name"]
+            val currencyId = call.parameters["currency_id"]
 
-            // Извлечение количества полученных монет (amount)
-            val amountOfCoins = params["amount"]
+            println("Received callback from Fyber:")
+            println("sid: $sid, userId: $userId, amount: $amount, currencyName: $currencyName, currencyId: $currencyId")
 
-            if (amountOfCoins != null) {
-                println("Amount of coins received: $amountOfCoins")
-            } else {
-                println("Amount of coins not found in the request")
-            }
-
-            call.respond(HttpStatusCode.OK)
         }
     }
 }
