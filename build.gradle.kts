@@ -32,3 +32,7 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
 }
+
+tasks.create("stage"){
+    dependsOn("installDist")
+}
