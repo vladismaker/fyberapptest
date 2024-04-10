@@ -1,0 +1,1 @@
+web: ./build/install/ru.fyberapptest.fyber-app-test/bin/ru.fyberapptest.fyber-app-test
