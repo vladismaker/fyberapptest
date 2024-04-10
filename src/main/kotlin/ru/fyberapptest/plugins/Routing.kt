@@ -51,12 +51,20 @@ fun Application.configureRouting() {
             val requestBody = call.receiveText()
             println("Received callback from Fyber: $requestBody")
 
-/*            transaction {
-                EarningDAO.new {
-                    userId = earning.userId
-                    amount = earning.amount
-                }
-            }*/
+            // Распарсим строку запроса для извлечения параметров
+            val params = requestBody.split("&").associate {
+                val (key, value) = it.split("=")
+                key to value
+            }
+
+            // Извлечение количества полученных монет (amount)
+            val amountOfCoins = params["amount"]
+
+            if (amountOfCoins != null) {
+                println("Amount of coins received: $amountOfCoins")
+            } else {
+                println("Amount of coins not found in the request")
+            }
 
             call.respond(HttpStatusCode.OK)
         }
