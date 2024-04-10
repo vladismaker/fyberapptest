@@ -33,6 +33,6 @@ dependencies {
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
 }
 
-tasks.create("stage"){
-    dependsOn("installDist")
+tasks {
+    create("stage").dependsOn("installDist")
 }

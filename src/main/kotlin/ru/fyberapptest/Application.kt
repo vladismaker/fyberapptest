@@ -7,7 +7,7 @@ import io.ktor.server.netty.*
 import ru.fyberapptest.plugins.*
 
 fun main() {
-    embeddedServer(Netty, port = System.getenv("PORT").toInt()){
+    embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
         configureRouting()
     }.start(wait = true)
 }
