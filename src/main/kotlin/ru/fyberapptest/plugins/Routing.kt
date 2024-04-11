@@ -104,7 +104,7 @@ fun Application.configureRouting() {
         }
 
         // Route to handle Fyber callback
-        get("/fyber-callback") {
+        post("/fyber-callback") {
             // Handle Fyber callback
 
             // Example: Get data from Fyber callback
