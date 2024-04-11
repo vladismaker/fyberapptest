@@ -48,7 +48,7 @@ fun Application.configureRouting() {
 
         val connections = mutableListOf<WebSocketSession>()
         // Маршрут для обработки callback от Fyber
-        webSocket("/fyber-callback") {
+/*        webSocket("/fyber-callback") {
             println("!!!!!!!!!!!!!!!!!!!!!!!!!WebSocket connection established")
             connections.add(this)
             try {
@@ -68,8 +68,8 @@ fun Application.configureRouting() {
                 connections.remove(this)
             }
 
-        }
-/*        get("/fyber-callback") {
+        }*/
+        get("/fyber-callback") {
             //val earning = call.receive<Earning>()
             //println("callback earning:$earning")
 
@@ -85,6 +85,6 @@ fun Application.configureRouting() {
             println("Received callback from Fyber:")
             println("sid: $sid, userId: $userId, amount: $amount, currencyName: $currencyName, currencyId: $currencyId")
 
-        }*/
+        }
     }
 }
