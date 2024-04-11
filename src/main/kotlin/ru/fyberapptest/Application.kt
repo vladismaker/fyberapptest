@@ -44,6 +44,22 @@ private fun setDataBase(): Connection {
         println("Не удалось получить текущую дату из базы данных.")
     }
     ///
+
+    val metaData = connection.metaData
+    val tables = metaData.getTables(null, null, null, arrayOf("TABLE"))
+
+    // Проверка наличия таблицы в списке
+    while (tables.next()) {
+        val existingTableName = tables.getString("TABLE_NAME")
+        if (existingTableName.equals("people", ignoreCase = true)) {
+            println("Таблица 'people' найдена в базе данных.")
+            //return true
+        }
+    }
+
+    println("Таблица 'people' не найдена в базе данных.")
+
+    ///
     return connection
 }
 
