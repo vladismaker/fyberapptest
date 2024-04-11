@@ -5,6 +5,9 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
+import io.ktor.websocket.*
+import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import ru.fyberapptest.dto.Earning
 
 fun Application.configureRouting() {
@@ -43,8 +46,30 @@ fun Application.configureRouting() {
             call.respond("user.balance")
         }
 
+        val connections = mutableListOf<WebSocketSession>()
         // Маршрут для обработки callback от Fyber
-        get("/fyber-callback") {
+        webSocket("/fyber-callback") {
+            println("!!!!!!!!!!!!!!!!!!!!!!!!!WebSocket connection established")
+            connections.add(this)
+            try {
+                for (frame in incoming) {
+                    frame as? Frame.Text ?: continue
+                    val receivedText = frame.readText()
+                    println("!!!!!!!!!!!!!!!!!!!!!!!!!Received callback from Fyber: $receivedText")
+
+                    // Send received data to all connected clients
+                    connections.forEach { session ->
+                        session.send(Frame.Text("!!!!!!!!!!!!!!!!!!!!!!!!!Received callback from Fyber: $receivedText"))
+                    }
+                }
+            } catch (e: ClosedReceiveChannelException) {
+                println("!!!!!!!!!!!!!!!!!!!!!!!!!WebSocket connection closed")
+            } finally {
+                connections.remove(this)
+            }
+
+        }
+/*        get("/fyber-callback") {
             //val earning = call.receive<Earning>()
             //println("callback earning:$earning")
 
@@ -60,6 +85,6 @@ fun Application.configureRouting() {
             println("Received callback from Fyber:")
             println("sid: $sid, userId: $userId, amount: $amount, currencyName: $currencyName, currencyId: $currencyId")
 
-        }
+        }*/
     }
 }

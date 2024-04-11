@@ -31,6 +31,8 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
+    implementation("io.ktor:ktor-websockets:$ktor_version")
+    implementation("io.ktor:ktor-server-websockets:$ktor_version")
 }
 
 tasks {
