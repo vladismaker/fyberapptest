@@ -6,6 +6,7 @@ val logback_version: String by project
 plugins {
     kotlin("jvm") version "1.9.23"
     id("io.ktor.plugin") version "2.3.9"
+    kotlin("plugin.serialization") version "1.6.0"
 }
 
 group = "ru.fyberapptest"
@@ -33,6 +34,7 @@ dependencies {
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
     implementation("io.ktor:ktor-websockets:$ktor_version")
     implementation("io.ktor:ktor-server-websockets:$ktor_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
 
 tasks {

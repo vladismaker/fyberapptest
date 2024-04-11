@@ -8,7 +8,10 @@ import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
+import kotlinx.serialization.encodeToString
+import ru.fyberapptest.dto.CallbackData
 import ru.fyberapptest.dto.Earning
+import kotlinx.serialization.json.Json
 
 fun Application.configureRouting() {
 
@@ -103,6 +106,8 @@ fun Application.configureRouting() {
             }
         }
 
+
+
         // Route to handle Fyber callback
         get("/fyber-callback") {
             // Handle Fyber callback
@@ -112,16 +117,24 @@ fun Application.configureRouting() {
             val userId = call.parameters["uid"]
             val amount = call.parameters["amount"]
 
+            //Создать объект
+            //Перевести в JSON
+            //Отправить сообщением
+            val callbackData = CallbackData(sid.toString(), userId.toString(), amount.toString())
+            val json = Json.encodeToString(callbackData)
+            //Добавить его в баззу данных
+
             println("Received callback from Fyber:")
             println("sid: $sid, userId: $userId, amount: $amount")
 
             // Send data to connected WebSocket clients
             val message = "Fyber callback: sid=$sid, userId=$userId, amount=$amount"
             connections.forEach { session ->
-                session.send(Frame.Text(message))
+                session.send(Frame.Text(json))
             }
 
             call.respond(HttpStatusCode.OK)
         }
     }
+
 }
