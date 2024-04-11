@@ -35,6 +35,7 @@ dependencies {
     implementation("io.ktor:ktor-websockets:$ktor_version")
     implementation("io.ktor:ktor-server-websockets:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.postgresql:postgresql:42.2.5")
 }
 
 tasks {

@@ -12,8 +12,18 @@ import kotlinx.serialization.encodeToString
 import ru.fyberapptest.dto.CallbackData
 import ru.fyberapptest.dto.Earning
 import kotlinx.serialization.json.Json
+import ru.fyberapptest.DatabaseLoadAllRepository
+import ru.fyberapptest.DatabaseSaveRepository
+import ru.fyberapptest.LoadAllRepository
+import ru.fyberapptest.SaveRepository
+import java.net.URI
+import java.sql.Connection
+import java.sql.DriverManager
 
-fun Application.configureRouting() {
+fun Application.configureRouting(connection: Connection) {
+
+    val saveRepository: SaveRepository = DatabaseSaveRepository(connection)
+    val loadRepository: LoadAllRepository = DatabaseLoadAllRepository(connection)
 
     routing {
         get("/message") {
@@ -117,12 +127,16 @@ fun Application.configureRouting() {
             val userId = call.parameters["uid"]
             val amount = call.parameters["amount"]
 
+            //Получить список из базы данных
+            val list:MutableList<CallbackData> = loadRepository.getAll()
             //Создать объект
-            //Перевести в JSON
-            //Отправить сообщением
             val callbackData = CallbackData(sid.toString(), userId.toString(), amount.toString())
-            val json = Json.encodeToString(callbackData)
-            //Добавить его в баззу данных
+            //Добавить в лист
+            list.add(callbackData)
+            //Перевести лист в JSON
+            val json: String = Json.encodeToString(list)
+            //val json = Json.encodeToString(callbackData)
+            //Отправить сообщением
 
             println("Received callback from Fyber:")
             println("sid: $sid, userId: $userId, amount: $amount")
@@ -133,8 +147,47 @@ fun Application.configureRouting() {
                 session.send(Frame.Text(json))
             }
 
+            //Добавить его в баззу данных
+            saveRepository.save(callbackData)
+
             call.respond(HttpStatusCode.OK)
         }
     }
-
 }
+
+private fun setDataBase(){
+    val databaseUrl = System.getenv("DATABASE_URL")
+
+    // Парсим URL для извлечения параметров подключения
+    val dbUri = URI(databaseUrl)
+    val username = dbUri.userInfo.split(":")[0]
+    val password = dbUri.userInfo.split(":")[1]
+    val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbUri.port}${dbUri.path}"
+
+    // Список объектов Person, которые нужно сохранить в базе данных
+    var list:MutableList<CallbackData> = mutableListOf()
+
+    // Подключение к базе данных
+    DriverManager.getConnection(dbUrl, username, password).use { connection ->
+        // SQL запрос для вставки данных
+        val sql = "INSERT INTO people (id, name, age) VALUES (?, ?, ?)"
+
+        // Подготовка SQL запроса
+        connection.prepareStatement(sql).use { statement ->
+            // Цикл по списку объектов Person для вставки каждого из них в базу данных
+            for (person in list) {
+                // Установка значений параметров запроса
+                statement.setString(1, person.sid)
+                statement.setString(2, person.userId)
+                statement.setString(3, person.amount)
+
+                // Выполнение запроса
+                statement.executeUpdate()
+            }
+        }
+    }
+
+    println("Данные успешно сохранены в базе данных.")
+}
+
+
