@@ -46,7 +46,7 @@ fun Application.configureRouting() {
             call.respond("user.balance")
         }
 
-        val connections = mutableListOf<WebSocketSession>()
+        /*val connections = mutableListOf<WebSocketSession>()
         // Маршрут для обработки callback от Fyber
         webSocket("/fyber-callback") {
             println("!!!!!!!!!!!!!!!!!!!!!!!!!WebSocket connection established")
@@ -68,7 +68,7 @@ fun Application.configureRouting() {
                 connections.remove(this)
             }
 
-        }
+        }*/
 /*        get("/fyber-callback") {
             //val earning = call.receive<Earning>()
             //println("callback earning:$earning")
@@ -86,5 +86,42 @@ fun Application.configureRouting() {
             println("sid: $sid, userId: $userId, amount: $amount, currencyName: $currencyName, currencyId: $currencyId")
 
         }*/
+
+        val connections = mutableListOf<WebSocketSession>()
+
+        // WebSocket endpoint
+        webSocket("/wss") {
+            println("!!!!!!!!!!!!!webSocket")
+            connections.add(this)
+
+            try {
+                for (frame in incoming) {
+                    // Handle incoming WebSocket messages if needed
+                }
+            } finally {
+                connections.remove(this)
+            }
+        }
+
+        // Route to handle Fyber callback
+        post("/fyber-callback") {
+            // Handle Fyber callback
+
+            // Example: Get data from Fyber callback
+            val sid = call.parameters["sid"]
+            val userId = call.parameters["uid"]
+            val amount = call.parameters["amount"]
+
+            println("Received callback from Fyber:")
+            println("sid: $sid, userId: $userId, amount: $amount")
+
+            // Send data to connected WebSocket clients
+            val message = "Fyber callback: sid=$sid, userId=$userId, amount=$amount"
+            connections.forEach { session ->
+                session.send(Frame.Text(message))
+            }
+
+            call.respond(HttpStatusCode.OK)
+        }
     }
 }
