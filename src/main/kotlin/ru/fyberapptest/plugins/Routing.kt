@@ -19,6 +19,7 @@ import ru.fyberapptest.SaveRepository
 import java.net.URI
 import java.sql.Connection
 import java.sql.DriverManager
+import java.util.UUID
 
 fun Application.configureRouting(connection: Connection) {
 
@@ -123,9 +124,9 @@ fun Application.configureRouting(connection: Connection) {
             // Handle Fyber callback
 
             // Example: Get data from Fyber callback
-            val sid = call.parameters["sid"]
-            val userId = call.parameters["uid"]
-            val amount = call.parameters["amount"]
+            val sid = call.parameters["sid"]?: UUID.randomUUID().toString()
+            val userId = call.parameters["uid"]?: "0"
+            val amount = call.parameters["amount"]?: "0"
 
             //Получить список из базы данных
             val list:MutableList<CallbackData> = loadRepository.getAll()

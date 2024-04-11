@@ -74,7 +74,7 @@ private fun setDataBase(): Connection {
         }
     }
 
-    println("Таблица 'people' не найдена в базе данных.")
+    //println("Таблица 'people' не найдена в базе данных.")
 
     ///
     return connection
