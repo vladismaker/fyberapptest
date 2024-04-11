@@ -31,6 +31,23 @@ private fun setDataBase(): Connection {
     val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbUri.port}${dbUri.path}"
 
     val connection = DriverManager.getConnection(dbUrl, username, password)
+
+    try {
+        val sql = """
+                CREATE TABLE IF NOT EXISTS people (
+                    sid VARCHAR(255) PRIMARY KEY,
+                    userId VARCHAR(255),
+                    amount VARCHAR(255)
+                )
+            """.trimIndent()
+        connection?.prepareStatement(sql)?.use { statement ->
+            statement.execute()
+        }
+        println("Таблица 'people' успешно создана.")
+    } catch (e: Exception) {
+        println("Ошибка при создании таблицы 'people': ${e.message}")
+    }
+
     ///
     val statement = connection.createStatement()
     val resultSet = statement.executeQuery("SELECT CURRENT_DATE")
