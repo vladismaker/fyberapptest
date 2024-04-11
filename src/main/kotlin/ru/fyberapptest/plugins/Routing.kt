@@ -16,6 +16,7 @@ import ru.fyberapptest.DatabaseLoadAllRepository
 import ru.fyberapptest.DatabaseSaveRepository
 import ru.fyberapptest.LoadAllRepository
 import ru.fyberapptest.SaveRepository
+import ru.fyberapptest.dto.Message
 import java.net.URI
 import java.sql.Connection
 import java.sql.DriverManager
@@ -111,6 +112,25 @@ fun Application.configureRouting(connection: Connection) {
             try {
                 for (frame in incoming) {
                     // Handle incoming WebSocket messages if needed
+                    when (frame) {
+                        is Frame.Text -> {
+                            val text = frame.readText()
+                            println("Received message: $text")
+
+                            // Парсинг JSON для извлечения идентификатора пользователя
+                            val json = Json { ignoreUnknownKeys = true }
+                            val message = json.decodeFromString<Message>(text)
+
+                            val userId = message.userId
+                            println("?????????????????User ID: $userId")
+
+                            // Здесь вы можете обработать идентификатор пользователя или выполнить другие действия в зависимости от ваших потребностей
+                        }
+                        // Добавляем ветку else для обработки любых других типов фреймов
+                        else -> {
+                            println("Received frame of type: ${frame.frameType.name}")
+                        }
+                    }
                 }
             } finally {
                 connections.remove(this)
