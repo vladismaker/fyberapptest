@@ -30,7 +30,21 @@ private fun setDataBase(): Connection {
     val password = dbUri.userInfo.split(":")[1]
     val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbUri.port}${dbUri.path}"
 
-    return DriverManager.getConnection(dbUrl, username, password)
+    val connection = DriverManager.getConnection(dbUrl, username, password)
+    ///
+    val statement = connection.createStatement()
+    val resultSet = statement.executeQuery("SELECT CURRENT_DATE")
+
+    // Проверка результата запроса
+    if (resultSet.next()) {
+        val currentDate = resultSet.getDate(1)
+        println("Успешное подключение к базе данных. Текущая дата: $currentDate")
+        //return true
+    } else {
+        println("Не удалось получить текущую дату из базы данных.")
+    }
+    ///
+    return connection
 }
 
 

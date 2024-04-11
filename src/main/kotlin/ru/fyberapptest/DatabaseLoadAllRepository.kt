@@ -5,7 +5,7 @@ import java.sql.Connection
 
 class DatabaseLoadAllRepository (private val connection: Connection) : LoadAllRepository {
     override fun getAll(): MutableList<CallbackData> {
-        val sql = "SELECT id, name, age FROM people"
+        val sql = "SELECT sid, userId, amount FROM people"
         val people = mutableListOf<CallbackData>()
         connection.prepareStatement(sql).use { statement ->
             val resultSet = statement.executeQuery()
