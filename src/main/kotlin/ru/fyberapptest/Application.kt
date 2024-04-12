@@ -35,7 +35,7 @@ private fun setDataBase(): Connection {
                 CREATE TABLE IF NOT EXISTS people (
                     sid VARCHAR(255) PRIMARY KEY,
                     userId VARCHAR(255),
-                    amount VARCHAR(255)
+                    amount VARCHAR(255),
                     date VARCHAR(255)
                 )
             """.trimIndent()
