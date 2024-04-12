@@ -48,6 +48,22 @@ fun Application.configureRouting(connection: Connection) {
             call.respond(Frame.Text(json2))
         }
 
+        get("/getClear") {
+            loadRepository.clearPeopleTable()
+
+            val listAllUsers:MutableList<User> = loadRepository.getAll()
+
+            val json2: String = Json.encodeToString(listAllUsers)
+
+            println("$$$$$$$$$$$$$$$$$$$$$$$$ $json2")
+
+            connections.forEach { session ->
+                session.send(Frame.Text(json2))
+            }
+
+            call.respond(Frame.Text(json2))
+        }
+
         get("/earnings/{userId}") {
             val userId = call.parameters["userId"]?.toIntOrNull() ?: return@get call.respond(HttpStatusCode.BadRequest)
 
@@ -159,7 +175,7 @@ fun Application.configureRouting(connection: Connection) {
         get("/fyber-callback") {
             // Handle Fyber callback
 
-            //loadRepository.clearPeopleTable()
+
 
             val randomUserId = listOf("111", "222")
             val randomAmount = listOf("100", "200", "300")
