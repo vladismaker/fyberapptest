@@ -196,12 +196,12 @@ fun Application.configureRouting(connection: Connection) {
                 if (user == null) {
                     // Пользователь не существует, создаем нового пользователя с задачей
                     println("Пользователь не существует, создаем нового пользователя с задачей")
-                    val newUser = User(userId, mutableListOf(Task(sid, amount, dateMy)))
+                    val newUser = User(userId, mutableListOf(Task(sid, amount)))
                     saveRepository.save(newUser)
                 } else {
                     // Пользователь существует, добавляем задачу в его массив задач
                     println("Пользователь существует, добавляем задачу в его массив задач")
-                    user.tasks.add(Task(sid, amount, dateMy))
+                    user.tasks.add(Task(sid, amount))
                     saveRepository.updateTasksForUser(userId, user.tasks)
                 }
 
