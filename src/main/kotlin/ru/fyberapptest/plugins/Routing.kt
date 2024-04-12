@@ -223,9 +223,8 @@ fun Application.configureRouting(connection: Connection) {
             call.respond(HttpStatusCode.OK)
         }*/
 
-        get("/fyber-callback") {
+        /*get("/fyber-callback") {
             // Handle Fyber callback
-
 
 
             val randomUserId = listOf("111", "222")
@@ -264,6 +263,60 @@ fun Application.configureRouting(connection: Connection) {
             }
 
             call.respond(HttpStatusCode.OK)
+        }*/
+
+        get("/fyber-callback") {
+            // Handle Fyber callback
+
+            // Example: Get data from Fyber callback
+            val sid = call.parameters["sid"]?: "0"
+            val userId = call.parameters["uid"]?: "0"
+            val amount = call.parameters["amount"]?: "0"
+
+            if (sid!="0"){
+                // Получить пользователя из базы данных
+                val user = loadRepository.getUser(userId)
+
+                if (user == null) {
+                    // Пользователь не существует, создаем нового пользователя с задачей
+                    println("Пользователь не существует, создаем нового пользователя с задачей")
+                    val newUser = User(userId, mutableListOf(Task(sid, amount)))
+                    saveRepository.save(newUser)
+                } else {
+                    // Пользователь существует, добавляем задачу в его массив задач
+                    println("Пользователь существует, добавляем задачу в его массив задач")
+                    user.tasks.add(Task(sid, amount))
+                    saveRepository.updateTasksForUser(userId, user.tasks)
+                }
+
+                // Send data to connected WebSocket clients
+
+                val listAllUsers:MutableList<User> = loadRepository.getAll()
+
+                val json2: String = Json.encodeToString(listAllUsers)
+
+                println("$$$$$$$$$$$$$$$$$$$$$$$$ $json2")
+
+                connections.forEach { session ->
+                    session.send(Frame.Text(json2))
+                }
+
+                val listTaskForUserId:MutableList<Task> = loadRepository.getTasksForUser(userId)
+
+                val json3: String = Json.encodeToString(listTaskForUserId)
+
+                println("$$$$$$$$$$$$$$$$$$$$$$$$ $json2")
+
+                connections.forEach { session ->
+                    session.send(Frame.Text(json3))
+                }
+
+                call.respond(HttpStatusCode.OK)
+            }else{
+                call.respond(HttpStatusCode.BadRequest)
+            }
+
+
         }
     }
 }
