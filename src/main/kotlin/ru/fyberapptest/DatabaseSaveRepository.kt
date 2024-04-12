@@ -16,7 +16,7 @@ class DatabaseSaveRepository(private val connection: Connection) : SaveRepositor
         }
     }*/
     override fun save(user: User) {
-        val sql = "INSERT INTO people (userId, sid, amount, date) VALUES (?, ?, ?)"
+        val sql = "INSERT INTO people (userId, sid, amount, date) VALUES (?, ?, ?, ?)"
         connection.prepareStatement(sql).use { statement ->
             user.tasks.forEach { task ->
                 statement.setString(1, user.userId)
@@ -31,7 +31,7 @@ class DatabaseSaveRepository(private val connection: Connection) : SaveRepositor
 
     override fun updateTasksForUser(userId: String, tasks: List<Task>) {
         val deleteSql = "DELETE FROM people WHERE userId = ?"
-        val insertSql = "INSERT INTO people (userId, sid, amount, date) VALUES (?, ?, ?)"
+        val insertSql = "INSERT INTO people (userId, sid, amount, date) VALUES (?, ?, ?, ?)"
 
         connection.prepareStatement(deleteSql).use { deleteStatement ->
             deleteStatement.setString(1, userId)
