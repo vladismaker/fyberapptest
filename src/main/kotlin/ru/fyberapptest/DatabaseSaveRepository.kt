@@ -15,13 +15,13 @@ class DatabaseSaveRepository(private val connection: Connection) : SaveRepositor
         }
     }*/
     override fun save(user: User) {
-        val sql = "INSERT INTO people (userId, sid, amount, date) VALUES (?, ?, ?, ?)"
+        val sql = "INSERT INTO people (userId, sid, amount, dateMy) VALUES (?, ?, ?, ?)"
         connection.prepareStatement(sql).use { statement ->
             user.tasks.forEach { task ->
                 statement.setString(1, user.userId)
                 statement.setString(2, task.sid)
                 statement.setString(3, task.amount)
-                statement.setString(4, task.date)
+                statement.setString(4, task.dateMy)
                 statement.addBatch()
             }
             statement.executeBatch()
@@ -30,7 +30,7 @@ class DatabaseSaveRepository(private val connection: Connection) : SaveRepositor
 
     override fun updateTasksForUser(userId: String, tasks: List<Task>) {
         val deleteSql = "DELETE FROM people WHERE userId = ?"
-        val insertSql = "INSERT INTO people (userId, sid, amount, date) VALUES (?, ?, ?, ?)"
+        val insertSql = "INSERT INTO people (userId, sid, amount, dateMy) VALUES (?, ?, ?, ?)"
 
         connection.prepareStatement(deleteSql).use { deleteStatement ->
             deleteStatement.setString(1, userId)
@@ -42,7 +42,7 @@ class DatabaseSaveRepository(private val connection: Connection) : SaveRepositor
                 insertStatement.setString(1, userId)
                 insertStatement.setString(2, task.sid)
                 insertStatement.setString(3, task.amount)
-                insertStatement.setString(4, task.date)
+                insertStatement.setString(4, task.dateMy)
                 insertStatement.addBatch()
             }
             insertStatement.executeBatch()
