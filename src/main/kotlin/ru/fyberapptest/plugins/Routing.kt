@@ -46,7 +46,7 @@ fun Application.configureRouting(connection: Connection) {
                 session.send(Frame.Text(json2))
             }*/
 
-            call.respond(Frame.Text(json2))
+            call.respond(json2)
         }
 
         get("/getClear") {
