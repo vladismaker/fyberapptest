@@ -54,7 +54,7 @@ class DatabaseLoadAllRepository (private val connection: Connection) : LoadAllRe
     }
 
     override fun getUser(userId: String): User? {
-        val sql = "SELECT id, sid, amount FROM users WHERE id = ?"
+        val sql = "SELECT id, sid, amount FROM people WHERE id = ?"
         var user: User? = null
         connection.prepareStatement(sql).use { statement ->
             statement.setString(1, userId)
