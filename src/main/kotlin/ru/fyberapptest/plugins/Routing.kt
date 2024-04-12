@@ -28,8 +28,24 @@ fun Application.configureRouting(connection: Connection) {
     val loadRepository: LoadAllRepository = DatabaseLoadAllRepository(connection)
 
     routing {
+        val connections = mutableListOf<WebSocketSession>()
+
         get("/message") {
             call.respondText("Влад молодец!", ContentType.Text.Plain)
+        }
+
+        get("/getAll") {
+            val listAllUsers:MutableList<User> = loadRepository.getAll()
+
+            val json2: String = Json.encodeToString(listAllUsers)
+
+            println("$$$$$$$$$$$$$$$$$$$$$$$$ $json2")
+
+            connections.forEach { session ->
+                session.send(Frame.Text(json2))
+            }
+
+            call.respond(Frame.Text(json2))
         }
 
         get("/earnings/{userId}") {
@@ -102,7 +118,7 @@ fun Application.configureRouting(connection: Connection) {
 
         }*/
 
-        val connections = mutableListOf<WebSocketSession>()
+
 
         // WebSocket endpoint
         webSocket("/wss") {
