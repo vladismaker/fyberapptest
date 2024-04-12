@@ -1,6 +1,7 @@
 package ru.fyberapptest
 
 import ru.fyberapptest.dto.CallbackData
+import ru.fyberapptest.dto.Task
 import ru.fyberapptest.dto.User
 import java.sql.Connection
 
@@ -24,6 +25,26 @@ class DatabaseSaveRepository(private val connection: Connection) : SaveRepositor
                 statement.addBatch()
             }
             statement.executeBatch()
+        }
+    }
+
+    override fun updateTasksForUser(userId: String, tasks: List<Task>) {
+        val deleteSql = "DELETE FROM people WHERE userId = ?"
+        val insertSql = "INSERT INTO people (userId, sid, amount) VALUES (?, ?, ?)"
+
+        connection.prepareStatement(deleteSql).use { deleteStatement ->
+            deleteStatement.setString(1, userId)
+            deleteStatement.executeUpdate()
+        }
+
+        connection.prepareStatement(insertSql).use { insertStatement ->
+            tasks.forEach { task ->
+                insertStatement.setString(1, userId)
+                insertStatement.setString(2, task.sid)
+                insertStatement.setString(3, task.amount)
+                insertStatement.addBatch()
+            }
+            insertStatement.executeBatch()
         }
     }
 }

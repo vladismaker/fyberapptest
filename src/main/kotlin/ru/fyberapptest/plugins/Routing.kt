@@ -199,21 +199,25 @@ fun Application.configureRouting(connection: Connection) {
             println("Received callback from Fyber:")
             println("sid: $sid, userId: $userId, amount: $amount")
 
-            // Send data to connected WebSocket clients
-            val message = "Fyber callback: sid=$sid, userId=$userId, amount=$amount"
-            connections.forEach { session ->
-                session.send(Frame.Text(json))
-            }
-
             //Добавить его в баззу данных
             saveRepository.save(User(userId, list))
 
-            val listAllUsers:MutableList<User> = loadRepository.getAll()
+            // Check if the user already exists in the database
+            //val existingTasks: MutableList<Task> = loadRepository.getTasksForUser(userId)
 
-            val json2: String = Json.encodeToString(listAllUsers)
+            // If the user does not exist, create a new user entry with the current task
+            if (list.isEmpty()) {
+                saveRepository.save(User(userId, mutableListOf(Task(sid, amount))))
+            } else {
+                // If the user exists, add the new task to their existing task list
+                list.add(Task(sid, amount))
+                saveRepository.updateTasksForUser(userId, list)
+            }
+
+            // Send data to connected WebSocket clients
 
             connections.forEach { session ->
-                session.send(Frame.Text(json2))
+                session.send(Frame.Text(json))
             }
 
             call.respond(HttpStatusCode.OK)
