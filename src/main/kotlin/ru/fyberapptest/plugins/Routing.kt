@@ -18,6 +18,8 @@ import ru.fyberapptest.dto.*
 import java.net.URI
 import java.sql.Connection
 import java.sql.DriverManager
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 import java.util.UUID
 
@@ -170,102 +172,6 @@ fun Application.configureRouting(connection: Connection) {
             }
         }
 
-
-
-        // Route to handle Fyber callback
-        /*get("/fyber-callback") {
-            // Handle Fyber callback
-
-
-
-            val randomUserId = listOf("111", "222")
-            val randomAmount = listOf("100", "200", "300")
-
-            // Example: Get data from Fyber callback
-            val sid = call.parameters["sid"]?: Random.nextInt(3000000).toString()
-            val userId = call.parameters["uid"]?: randomUserId[Random.nextInt(2)]
-            val amount = call.parameters["amount"]?: randomAmount[Random.nextInt(3)]
-
-            //Получить список из базы данных
-            val list:MutableList<Task> = loadRepository.getTasksForUser(userId)
-            //Создать объект
-            val task = Task(sid, amount)
-            //Добавить в лист
-            list.add(task)
-            //Перевести лист в JSON
-            val json: String = Json.encodeToString(list)
-            //val json = Json.encodeToString(callbackData)
-            //Отправить сообщением
-
-            println("Received callback from Fyber:")
-            println("sid: $sid, userId: $userId, amount: $amount")
-
-            //Добавить его в баззу данных
-            //saveRepository.save(User(userId, list))
-
-            // Check if the user already exists in the database
-            //val existingTasks: MutableList<Task> = loadRepository.getTasksForUser(userId)
-
-            // If the user does not exist, create a new user entry with the current task
-            if (list.isEmpty()) {
-                saveRepository.save(User(userId, mutableListOf(Task(sid, amount))))
-            } else {
-                // If the user exists, add the new task to their existing task list
-                list.add(Task(sid, amount))
-                saveRepository.updateTasksForUser(userId, list)
-            }
-
-            // Send data to connected WebSocket clients
-
-            connections.forEach { session ->
-                session.send(Frame.Text(json))
-            }
-
-            call.respond(HttpStatusCode.OK)
-        }*/
-
-        /*get("/fyber-callback") {
-            // Handle Fyber callback
-
-
-            val randomUserId = listOf("111", "222")
-            val randomAmount = listOf("100", "200", "300")
-
-            // Example: Get data from Fyber callback
-            val sid = call.parameters["sid"]?: Random.nextInt(3000000).toString()
-            val userId = call.parameters["uid"]?: randomUserId[Random.nextInt(2)]
-            val amount = call.parameters["amount"]?: randomAmount[Random.nextInt(3)]
-
-            // Получить пользователя из базы данных
-            val user = loadRepository.getUser(userId)
-
-            if (user == null) {
-                // Пользователь не существует, создаем нового пользователя с задачей
-                println("Пользователь не существует, создаем нового пользователя с задачей")
-                val newUser = User(userId, mutableListOf(Task(sid, amount)))
-                saveRepository.save(newUser)
-            } else {
-                // Пользователь существует, добавляем задачу в его массив задач
-                println("Пользователь существует, добавляем задачу в его массив задач")
-                user.tasks.add(Task(sid, amount))
-                saveRepository.updateTasksForUser(userId, user.tasks)
-            }
-
-            // Send data to connected WebSocket clients
-
-            val listAllUsers:MutableList<User> = loadRepository.getAll()
-
-            val json2: String = Json.encodeToString(listAllUsers)
-
-            println("$$$$$$$$$$$$$$$$$$$$$$$$ $json2")
-
-            connections.forEach { session ->
-                session.send(Frame.Text(json2))
-            }
-
-            call.respond(HttpStatusCode.OK)
-        }*/
-
         get("/fyber-callback") {
             // Handle Fyber callback
 
@@ -281,19 +187,21 @@ fun Application.configureRouting(connection: Connection) {
             val userId = call.parameters["uid"]?: randomUserId[Random.nextInt(2)]
             val amount = call.parameters["amount"]?: randomAmount[Random.nextInt(3)]
 
-            if (sid!="0"){
+            if (sid!="0" && userId!="0" && amount!="0"){
                 // Получить пользователя из базы данных
                 val user = loadRepository.getUser(userId)
+
+                val date = getDateNow()
 
                 if (user == null) {
                     // Пользователь не существует, создаем нового пользователя с задачей
                     println("Пользователь не существует, создаем нового пользователя с задачей")
-                    val newUser = User(userId, mutableListOf(Task(sid, amount)))
+                    val newUser = User(userId, mutableListOf(Task(sid, amount, date)))
                     saveRepository.save(newUser)
                 } else {
                     // Пользователь существует, добавляем задачу в его массив задач
                     println("Пользователь существует, добавляем задачу в его массив задач")
-                    user.tasks.add(Task(sid, amount))
+                    user.tasks.add(Task(sid, amount, date))
                     saveRepository.updateTasksForUser(userId, user.tasks)
                 }
 
@@ -327,6 +235,12 @@ fun Application.configureRouting(connection: Connection) {
 
         }
     }
+}
+
+private fun getDateNow():String{
+    val currentDateTime = LocalDateTime.now()
+    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
+    return currentDateTime.format(formatter)
 }
 
 private fun setDataBase(){
