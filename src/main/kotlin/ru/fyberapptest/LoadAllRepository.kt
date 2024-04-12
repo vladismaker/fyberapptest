@@ -1,7 +1,10 @@
 package ru.fyberapptest
 
 import ru.fyberapptest.dto.CallbackData
+import ru.fyberapptest.dto.Task
+import ru.fyberapptest.dto.User
 
 interface LoadAllRepository {
-    fun getAll(): MutableList<CallbackData>
+    fun getAll(userId:String): MutableList<User>
+    fun getTasksForUser(userId:String): MutableList<Task>
 }

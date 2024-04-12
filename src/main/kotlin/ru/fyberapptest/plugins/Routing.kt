@@ -9,18 +9,18 @@ import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import kotlinx.coroutines.channels.ClosedReceiveChannelException
 import kotlinx.serialization.encodeToString
-import ru.fyberapptest.dto.CallbackData
-import ru.fyberapptest.dto.Earning
 import kotlinx.serialization.json.Json
 import ru.fyberapptest.DatabaseLoadAllRepository
 import ru.fyberapptest.DatabaseSaveRepository
 import ru.fyberapptest.LoadAllRepository
 import ru.fyberapptest.SaveRepository
-import ru.fyberapptest.dto.Message
+import ru.fyberapptest.dto.*
 import java.net.URI
 import java.sql.Connection
 import java.sql.DriverManager
+import kotlin.random.Random
 import java.util.UUID
+
 
 fun Application.configureRouting(connection: Connection) {
 
@@ -143,17 +143,20 @@ fun Application.configureRouting(connection: Connection) {
         get("/fyber-callback") {
             // Handle Fyber callback
 
+            val randomUserId = listOf("111", "222")
+            val randomAmount = listOf("100", "200", "300")
+
             // Example: Get data from Fyber callback
             val sid = call.parameters["sid"]?: UUID.randomUUID().toString()
-            val userId = call.parameters["uid"]?: "0"
-            val amount = call.parameters["amount"]?: "0"
+            val userId = call.parameters["uid"]?: randomUserId[Random.nextInt(3)]
+            val amount = call.parameters["amount"]?: randomAmount[Random.nextInt(3)]
 
             //Получить список из базы данных
-            val list:MutableList<CallbackData> = loadRepository.getAll()
+            val list:MutableList<Task> = loadRepository.getTasksForUser(userId)
             //Создать объект
-            val callbackData = CallbackData(sid.toString(), userId.toString(), amount.toString())
+            val task = Task(sid, amount)
             //Добавить в лист
-            list.add(callbackData)
+            list.add(task)
             //Перевести лист в JSON
             val json: String = Json.encodeToString(list)
             //val json = Json.encodeToString(callbackData)
@@ -169,7 +172,7 @@ fun Application.configureRouting(connection: Connection) {
             }
 
             //Добавить его в баззу данных
-            saveRepository.save(callbackData)
+            saveRepository.save(User(userId, list))
 
             call.respond(HttpStatusCode.OK)
         }

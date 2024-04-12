@@ -1,3 +1,3 @@
 package ru.fyberapptest.dto
 
-data class User(val id: Int, val name: String, val balance: Double)
+data class User(val userId: String, val tasks: MutableList<Task>)
