@@ -36,6 +36,7 @@ private fun setDataBase(): Connection {
                     sid VARCHAR(255) PRIMARY KEY,
                     userId VARCHAR(255),
                     amount VARCHAR(255)
+                    date VARCHAR(255)
                 )
             """.trimIndent()
         connection?.prepareStatement(sql)?.use { statement ->
