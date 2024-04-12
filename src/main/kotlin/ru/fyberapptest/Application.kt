@@ -13,9 +13,11 @@ fun main() {
     val port = System.getenv("PORT")?.toInt() ?: 8080 // Порт 8080 по умолчанию
     println("port:$port")
 
+    val connection = setDataBase()
+
     embeddedServer(Netty, port = port) {
         install(WebSockets)
-        configureRouting(setDataBase())
+        configureRouting(connection)
     }.start(wait = true)
 }
 
@@ -31,11 +33,22 @@ private fun setDataBase(): Connection {
     val connection = DriverManager.getConnection(dbUrl, username, password)
 
     try {
+        val sql = "DROP TABLE IF EXISTS people"
+        connection?.prepareStatement(sql)?.use { statement ->
+            statement.execute()
+        }
+        println("Таблица 'people' успешно удалена.")
+    } catch (e: Exception) {
+        println("Ошибка при удалении таблицы 'people': ${e.message}")
+    }
+
+    try {
         val sql = """
                 CREATE TABLE IF NOT EXISTS people (
                     sid VARCHAR(255) PRIMARY KEY,
                     userId VARCHAR(255),
-                    amount VARCHAR(255)
+                    amount VARCHAR(255),
+                    nwDat VARCHAR(255)
                 )
             """.trimIndent()
         connection?.prepareStatement(sql)?.use { statement ->

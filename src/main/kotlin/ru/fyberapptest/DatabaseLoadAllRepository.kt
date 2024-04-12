@@ -13,7 +13,7 @@ class DatabaseLoadAllRepository (private val connection: Connection) : LoadAllRe
     }
 
     override fun getAll(): MutableList<User> {
-        val sql = "SELECT userId, sid, amount FROM people"
+        val sql = "SELECT userId, sid, amount, nwDat FROM people"
         val users = mutableListOf<User>()
         //val tasks = mutableListOf<Task>()
         connection.prepareStatement(sql).use { statement ->
@@ -22,14 +22,15 @@ class DatabaseLoadAllRepository (private val connection: Connection) : LoadAllRe
                 val userId = resultSet.getString("userId")
                 val sid = resultSet.getString("sid")
                 val amount = resultSet.getString("amount")
+                val nwDat = resultSet.getString("nwDat")
                 // Проверяем, есть ли уже пользователь с таким userId в списке
                 val existingUser = users.find { it.userId == userId }
                 if (existingUser != null) {
                     // Если пользователь уже есть, добавляем задачу к его списку
-                    existingUser.tasks.add(Task(sid, amount))
+                    existingUser.tasks.add(Task(sid, amount, nwDat))
                 } else {
                     // Если пользователя еще нет, создаем нового пользователя и добавляем задачу к его списку
-                    val newUser = User(userId, mutableListOf(Task(sid, amount)))
+                    val newUser = User(userId, mutableListOf(Task(sid, amount, nwDat)))
                     users.add(newUser)
                 }
             }
@@ -38,7 +39,7 @@ class DatabaseLoadAllRepository (private val connection: Connection) : LoadAllRe
     }
 
     override fun getTasksForUser(userId: String): MutableList<Task> {
-        val sql = "SELECT sid, amount FROM people WHERE userId = ?"
+        val sql = "SELECT sid, amount, nwDat FROM people WHERE userId = ?"
         val tasks = mutableListOf<Task>()
         connection.prepareStatement(sql).use { statement ->
             statement.setString(1, userId)
@@ -46,14 +47,15 @@ class DatabaseLoadAllRepository (private val connection: Connection) : LoadAllRe
             while (resultSet.next()) {
                 val sid = resultSet.getString("sid")
                 val amount = resultSet.getString("amount")
-                tasks.add(Task(sid, amount))
+                val nwDat = resultSet.getString("nwDat")
+                tasks.add(Task(sid, amount, nwDat))
             }
         }
         return tasks
     }
 
     override fun getUser(userId: String): User? {
-        val sql = "SELECT userId, sid, amount FROM people WHERE userId = ?"
+        val sql = "SELECT userId, sid, amount, nwDat FROM people WHERE userId = ?"
         var user: User? = null
         connection.prepareStatement(sql).use { statement ->
             statement.setString(1, userId)
@@ -65,7 +67,8 @@ class DatabaseLoadAllRepository (private val connection: Connection) : LoadAllRe
                 }
                 val sid = resultSet.getString("sid")
                 val amount = resultSet.getString("amount")
-                tasks.add(Task(sid, amount))
+                val nwDat = resultSet.getString("nwDat")
+                tasks.add(Task(sid, amount, nwDat))
             }
         }
         return user
