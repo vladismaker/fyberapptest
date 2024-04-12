@@ -243,39 +243,5 @@ private fun getDateNow():String{
     return currentDateTime.format(formatter)
 }
 
-private fun setDataBase(){
-    val databaseUrl = System.getenv("DATABASE_URL")
-
-    // Парсим URL для извлечения параметров подключения
-    val dbUri = URI(databaseUrl)
-    val username = dbUri.userInfo.split(":")[0]
-    val password = dbUri.userInfo.split(":")[1]
-    val dbUrl = "jdbc:postgresql://${dbUri.host}:${dbUri.port}${dbUri.path}"
-
-    // Список объектов Person, которые нужно сохранить в базе данных
-    var list:MutableList<CallbackData> = mutableListOf()
-
-    // Подключение к базе данных
-    DriverManager.getConnection(dbUrl, username, password).use { connection ->
-        // SQL запрос для вставки данных
-        val sql = "INSERT INTO people (id, name, age) VALUES (?, ?, ?)"
-
-        // Подготовка SQL запроса
-        connection.prepareStatement(sql).use { statement ->
-            // Цикл по списку объектов Person для вставки каждого из них в базу данных
-            for (person in list) {
-                // Установка значений параметров запроса
-                statement.setString(1, person.sid)
-                statement.setString(2, person.userId)
-                statement.setString(3, person.amount)
-
-                // Выполнение запроса
-                statement.executeUpdate()
-            }
-        }
-    }
-
-    println("Данные успешно сохранены в базе данных.")
-}
 
 
