@@ -26,6 +26,7 @@ fun Application.configureRouting(connection: Connection) {
 
     val saveRepository: SaveRepository = DatabaseSaveRepository(connection)
     val loadRepository: LoadAllRepository = DatabaseLoadAllRepository(connection)
+    var adId:String
 
     routing {
         val connections = mutableListOf<WebSocketSession>()
@@ -41,9 +42,9 @@ fun Application.configureRouting(connection: Connection) {
 
             println("$$$$$$$$$$$$$$$$$$$$$$$$ $json2")
 
-            connections.forEach { session ->
+/*            connections.forEach { session ->
                 session.send(Frame.Text(json2))
-            }
+            }*/
 
             call.respond(Frame.Text(json2))
         }
@@ -153,8 +154,8 @@ fun Application.configureRouting(connection: Connection) {
                             val json = Json { ignoreUnknownKeys = true }
                             val message = json.decodeFromString<Message>(text)
 
-                            val userId = message.userId
-                            println("?????????????????User ID: $userId")
+                            adId = message.userId
+                            println("?????????????????User ID: $adId")
 
                             // Здесь вы можете обработать идентификатор пользователя или выполнить другие действия в зависимости от ваших потребностей
                         }
