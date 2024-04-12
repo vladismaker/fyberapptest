@@ -291,7 +291,7 @@ fun Application.configureRouting(connection: Connection) {
 
                 // Send data to connected WebSocket clients
 
-                val listAllUsers:MutableList<User> = loadRepository.getAll()
+/*                val listAllUsers:MutableList<User> = loadRepository.getAll()
 
                 val json2: String = Json.encodeToString(listAllUsers)
 
@@ -299,13 +299,13 @@ fun Application.configureRouting(connection: Connection) {
 
                 connections.forEach { session ->
                     session.send(Frame.Text(json2))
-                }
+                }*/
 
                 val listTaskForUserId:MutableList<Task> = loadRepository.getTasksForUser(userId)
 
                 val json3: String = Json.encodeToString(listTaskForUserId)
 
-                println("$$$$$$$$$$$$$$$$$$$$$$$$ $json2")
+                println("$$$$$$$$$$$$$$$$$$$$$$$$ $json3")
 
                 connections.forEach { session ->
                     session.send(Frame.Text(json3))
