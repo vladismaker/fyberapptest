@@ -187,7 +187,7 @@ fun Application.configureRouting(connection: Connection) {
             val userId = call.parameters["uid"]?: randomUserId[Random.nextInt(2)]
             val amount = call.parameters["amount"]?: randomAmount[Random.nextInt(3)]
 
-            if (sid!="0" && userId!="0" && amount!="0"){
+            if (sid!="0"){
                 // Получить пользователя из базы данных
                 val user = loadRepository.getUser(userId)
 
