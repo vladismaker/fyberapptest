@@ -200,7 +200,7 @@ fun Application.configureRouting(connection: Connection) {
             println("sid: $sid, userId: $userId, amount: $amount")
 
             //Добавить его в баззу данных
-            saveRepository.save(User(userId, list))
+            //saveRepository.save(User(userId, list))
 
             // Check if the user already exists in the database
             //val existingTasks: MutableList<Task> = loadRepository.getTasksForUser(userId)
