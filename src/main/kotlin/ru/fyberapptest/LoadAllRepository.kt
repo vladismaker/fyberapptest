@@ -9,4 +9,6 @@ interface LoadAllRepository {
     fun getTasksForUser(userId:String): MutableList<Task>
 
     fun clearPeopleTable()
+
+    fun getUser(userId: String):User?
 }

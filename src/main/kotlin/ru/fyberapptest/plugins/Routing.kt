@@ -172,7 +172,7 @@ fun Application.configureRouting(connection: Connection) {
 
 
         // Route to handle Fyber callback
-        get("/fyber-callback") {
+        /*get("/fyber-callback") {
             // Handle Fyber callback
 
 
@@ -218,6 +218,49 @@ fun Application.configureRouting(connection: Connection) {
 
             connections.forEach { session ->
                 session.send(Frame.Text(json))
+            }
+
+            call.respond(HttpStatusCode.OK)
+        }*/
+
+        get("/fyber-callback") {
+            // Handle Fyber callback
+
+
+
+            val randomUserId = listOf("111", "222")
+            val randomAmount = listOf("100", "200", "300")
+
+            // Example: Get data from Fyber callback
+            val sid = call.parameters["sid"]?: Random.nextInt(3000000).toString()
+            val userId = call.parameters["uid"]?: randomUserId[Random.nextInt(2)]
+            val amount = call.parameters["amount"]?: randomAmount[Random.nextInt(3)]
+
+            // Получить пользователя из базы данных
+            val user = loadRepository.getUser(userId)
+
+            if (user == null) {
+                // Пользователь не существует, создаем нового пользователя с задачей
+                println("Пользователь не существует, создаем нового пользователя с задачей")
+                val newUser = User(userId, mutableListOf(Task(sid, amount)))
+                saveRepository.save(newUser)
+            } else {
+                // Пользователь существует, добавляем задачу в его массив задач
+                println("Пользователь существует, добавляем задачу в его массив задач")
+                user.tasks.add(Task(sid, amount))
+                saveRepository.updateTasksForUser(userId, user.tasks)
+            }
+
+            // Send data to connected WebSocket clients
+
+            val listAllUsers:MutableList<User> = loadRepository.getAll()
+
+            val json2: String = Json.encodeToString(listAllUsers)
+
+            println("$$$$$$$$$$$$$$$$$$$$$$$$ $json2")
+
+            connections.forEach { session ->
+                session.send(Frame.Text(json2))
             }
 
             call.respond(HttpStatusCode.OK)

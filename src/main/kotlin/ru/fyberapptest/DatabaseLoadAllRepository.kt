@@ -52,4 +52,23 @@ class DatabaseLoadAllRepository (private val connection: Connection) : LoadAllRe
         }
         return tasks
     }
+
+    override fun getUser(userId: String): User? {
+        val sql = "SELECT id, sid, amount FROM users WHERE id = ?"
+        var user: User? = null
+        connection.prepareStatement(sql).use { statement ->
+            statement.setString(1, userId)
+            val resultSet = statement.executeQuery()
+            val tasks = mutableListOf<Task>()
+            while (resultSet.next()) {
+                if (user == null) {
+                    user = User(userId, tasks)
+                }
+                val sid = resultSet.getString("sid")
+                val amount = resultSet.getString("amount")
+                tasks.add(Task(sid, amount))
+            }
+        }
+        return user
+    }
 }
