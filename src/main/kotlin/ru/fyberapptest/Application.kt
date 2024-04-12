@@ -32,7 +32,7 @@ private fun setDataBase(): Connection {
 
     val connection = DriverManager.getConnection(dbUrl, username, password)
 
-    try {
+/*    try {
         val sql = "DROP TABLE IF EXISTS people"
         connection?.prepareStatement(sql)?.use { statement ->
             statement.execute()
@@ -40,7 +40,7 @@ private fun setDataBase(): Connection {
         println("Таблица 'people' успешно удалена.")
     } catch (e: Exception) {
         println("Ошибка при удалении таблицы 'people': ${e.message}")
-    }
+    }*/
 
     try {
         val sql = """
