@@ -182,7 +182,7 @@ fun Application.configureRouting(connection: Connection) {
 
             // Example: Get data from Fyber callback
             val sid = call.parameters["sid"]?: Random.nextInt(3000000).toString()
-            val userId = call.parameters["uid"]?: randomUserId[Random.nextInt(3)]
+            val userId = call.parameters["uid"]?: randomUserId[Random.nextInt(2)]
             val amount = call.parameters["amount"]?: randomAmount[Random.nextInt(3)]
 
             //Получить список из базы данных
