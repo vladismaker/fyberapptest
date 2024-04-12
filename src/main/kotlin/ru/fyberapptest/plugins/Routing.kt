@@ -143,6 +143,8 @@ fun Application.configureRouting(connection: Connection) {
         get("/fyber-callback") {
             // Handle Fyber callback
 
+            //loadRepository.clearPeopleTable()
+
             val randomUserId = listOf("111", "222")
             val randomAmount = listOf("100", "200", "300")
 
@@ -173,6 +175,14 @@ fun Application.configureRouting(connection: Connection) {
 
             //Добавить его в баззу данных
             saveRepository.save(User(userId, list))
+
+            val listAllUsers:MutableList<User> = loadRepository.getAll()
+
+            val json2: String = Json.encodeToString(listAllUsers)
+
+            connections.forEach { session ->
+                session.send(Frame.Text(json2))
+            }
 
             call.respond(HttpStatusCode.OK)
         }

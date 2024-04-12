@@ -6,7 +6,14 @@ import ru.fyberapptest.dto.User
 import java.sql.Connection
 
 class DatabaseLoadAllRepository (private val connection: Connection) : LoadAllRepository {
-    override fun getAll(userId:String): MutableList<User> {
+    override fun clearPeopleTable() {
+        val sql = "DELETE FROM people"
+        connection.prepareStatement(sql).use { statement ->
+            statement.executeUpdate()
+        }
+    }
+
+    override fun getAll(): MutableList<User> {
         val sql = "SELECT userId, sid, amount FROM people"
         val users = mutableListOf<User>()
         //val tasks = mutableListOf<Task>()

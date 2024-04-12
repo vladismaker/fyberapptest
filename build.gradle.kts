@@ -36,6 +36,8 @@ dependencies {
     implementation("io.ktor:ktor-server-websockets:$ktor_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("org.postgresql:postgresql:42.2.5")
+    implementation ("com.google.android.gms:play-services-ads-identifier:18.0.1")
+
 }
 
 tasks {

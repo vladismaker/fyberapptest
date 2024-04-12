@@ -1,12 +1,10 @@
 package ru.fyberapptest
 
 import io.ktor.server.application.*
-import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.websocket.*
-import ru.fyberapptest.dto.CallbackData
-import ru.fyberapptest.plugins.*
+import ru.fyberapptest.plugins.configureRouting
 import java.net.URI
 import java.sql.Connection
 import java.sql.DriverManager

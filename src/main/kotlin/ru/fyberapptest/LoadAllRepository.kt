@@ -5,6 +5,8 @@ import ru.fyberapptest.dto.Task
 import ru.fyberapptest.dto.User
 
 interface LoadAllRepository {
-    fun getAll(userId:String): MutableList<User>
+    fun getAll(): MutableList<User>
     fun getTasksForUser(userId:String): MutableList<Task>
+
+    fun clearPeopleTable()
 }
