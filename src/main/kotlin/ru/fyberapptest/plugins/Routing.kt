@@ -186,6 +186,8 @@ fun Application.configureRouting(connection: Connection) {
             val sid = call.parameters["sid"]?: Random.nextInt(3000000).toString()
             val userId = call.parameters["uid"]?: randomUserId[Random.nextInt(2)]
             val amount = call.parameters["amount"]?: randomAmount[Random.nextInt(3)]
+            println("Данные пользоателя ))))))))))))))))))))))))))))))))))))))))))))))))))))")
+            println("sid$sid, userId$userId, amount$amount")
 
             if (sid!="0" && userId!="0" && amount!="0"){
                 // Получить пользователя из базы данных
