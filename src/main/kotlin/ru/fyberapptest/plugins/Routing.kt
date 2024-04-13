@@ -200,9 +200,13 @@ fun Application.configureRouting(connection: Connection) {
                     saveRepository.save(newUser)
                 } else {
                     // Пользователь существует, добавляем задачу в его массив задач
-                    println("Пользователь существует, добавляем задачу в его массив задач")
-                    user.tasks.add(Task(sid, amount, nwDat))
-                    saveRepository.updateTasksForUser(userId, user.tasks)
+                    val existingTask = user.tasks.find { it.sid == sid }
+                    if (existingTask == null) {
+                        // Если задачи с таким sid нет, добавляем задачу в его массив задач
+                        println("Пользователь существует, добавляем задачу в его массив задач")
+                        user.tasks.add(Task(sid, amount, nwDat))
+                        saveRepository.updateTasksForUser(userId, user.tasks)
+                    }
                 }
 
                 // Send data to connected WebSocket clients
